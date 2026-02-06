@@ -16,7 +16,7 @@ CREATE TABLE `sitem` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `state` int(11) DEFAULT 1,
   `category` int(11) NOT NULL,
-  `name` varchar(32) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `price` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
