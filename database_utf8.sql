@@ -1,0 +1,191 @@
+﻿-- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
+--
+-- Host: localhost    Database: practice
+-- ------------------------------------------------------
+-- Server version	10.4.32-MariaDB
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `likebbs`
+--
+
+DROP TABLE IF EXISTS `likebbs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `likebbs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `postDate` datetime DEFAULT NULL,
+  `postTitle` varchar(32) DEFAULT NULL,
+  `postComment` text DEFAULT NULL,
+  `postUser` varchar(32) DEFAULT NULL,
+  `likeCount` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `likebbs`
+--
+
+LOCK TABLES `likebbs` WRITE;
+/*!40000 ALTER TABLE `likebbs` DISABLE KEYS */;
+INSERT INTO `likebbs` VALUES (1,'2025-11-13 15:43:48','πéªπéúπâ│πâèπü╛πâ╝πüì','Θúƒπü╣πüƒπüä','πé║πéºπâ╝πé╛πâ╝πâåπââ',0),(2,'2025-11-13 15:44:51','πü░πü╢πü░πü╢','πü╢πü░πü╢πü░','πé║πéºπâ╝πé╛πâ╝πâåπââ',0),(3,'2025-11-13 15:45:43','πâ⌐πâ╝πâ₧πâ│Θúƒπü╣πüƒπüä','πüèΘçæπüîπü¬πüä','πé║πéºπâ╝πé╛πâ╝πâåπââ',0);
+/*!40000 ALTER TABLE `likebbs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sample01`
+--
+
+DROP TABLE IF EXISTS `sample01`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sample01` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `state` int(11) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `birthday` date NOT NULL,
+  `gender` varchar(8) NOT NULL,
+  `address` varchar(128) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sample01`
+--
+
+LOCK TABLES `sample01` WRITE;
+/*!40000 ALTER TABLE `sample01` DISABLE KEYS */;
+INSERT INTO `sample01` VALUES (2,1,'Kyaw Gyi','2002-02-01','τö╖µÇº','ΦÑ┐σ««σ╕é'),(3,1,'Kyaw','2000-02-01','τö╖µÇº','ΦÑ┐σ««σ╕é'),(6,1,'σìù','2000-12-12','σÑ│µÇº','ΦÑ┐σ««σ╕é'),(7,1,'σ▓íΣ╕è','2003-01-12','σÑ│µÇº','ΦÑ┐σ««σ╕é'),(8,1,'σ▒▒σ┤Ä','2005-01-12','σÑ│µÇº','ΦÑ┐σ««σ╕é'),(9,1,'σñºσíÜ','2012-01-12','τö╖µÇº','ΦÑ┐σ««σ╕é'),(10,1,'Θê┤µ£¿','2000-01-12','τö╖µÇº','σº½Φ╖»σ╕é'),(11,1,'Σ╜ÉπÇàµ£¿','1999-11-12','τö╖µÇº','σº½Φ╖»σ╕é'),(12,1,'µ╕íΘéè','1998-11-12','σÑ│µÇº','ΦÑ┐σ««σ╕é'),(13,1,'τëº','2001-07-12','σÑ│µÇº','τÑ₧µê╕σ╕é'),(14,1,'πü┐πéî','2002-07-22','σÑ│µÇº','τÑ₧µê╕σ╕é'),(15,1,'σä¬','2003-07-22','σÑ│µÇº','ΦÑ┐σ««σ╕é'),(16,1,'Thu Ka','2004-08-22','τö╖µÇº','ΦÑ┐σ««σ╕é'),(17,1,'πü¬πüè','2002-02-19','σÑ│µÇº','ΦÑ┐σ««σ╕é'),(18,1,'Win','2002-09-19','σÑ│µÇº','τÑ₧µê╕σ╕é'),(19,1,'πü╛πüìπü╛','2000-04-11','σÑ│µÇº','τÑ₧µê╕σ╕é'),(20,1,'σñÅµ▓ó','2000-01-12','σÑ│µÇº','σº½Φ╖»σ╕é'),(21,1,'σÇ½σñ¬ΘâÄ','1989-02-23','τö╖µÇº','σº½Φ╖»σ╕é'),(22,1,'σÆîµáù','2002-12-23','σÑ│µÇº','σº½Φ╖»σ╕é');
+/*!40000 ALTER TABLE `sample01` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `scategory`
+--
+
+DROP TABLE IF EXISTS `scategory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `scategory` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `state` int(11) DEFAULT 1,
+  `categoryNo` int(11) NOT NULL,
+  `categoryName` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `scategory`
+--
+
+LOCK TABLES `scategory` WRITE;
+/*!40000 ALTER TABLE `scategory` DISABLE KEYS */;
+INSERT INTO `scategory` VALUES (1,1,1,'πü¿πéèπüéπüêπüÜµ│¿µûç'),(2,1,2,'πüèσ»┐σÅ╕'),(3,1,3,'τä╝πüìτë⌐'),(7,1,0,'µÅÜπüÆτë⌐'),(8,1,0,'πâëπâ¬πâ│πé»'),(9,1,0,'πâçπé╢πâ╝πâê');
+/*!40000 ALTER TABLE `scategory` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sitem`
+--
+
+DROP TABLE IF EXISTS `sitem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sitem` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `state` int(11) DEFAULT 1,
+  `category` int(11) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `price` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sitem`
+--
+
+LOCK TABLES `sitem` WRITE;
+/*!40000 ALTER TABLE `sitem` DISABLE KEYS */;
+INSERT INTO `sitem` VALUES (2,1,1,'πâèπâ│πü¿πâüπé¡πâ│πé½πâ¼πâ╝ [µ£ƒΘûôΘÖÉσ«Ü]',1200),(3,1,1,'πéñπâ│πâëΘó¿πüèπü½πüÅπü¿πüöΘú» [πüèπüÖπüÖπéü]',4000),(4,1,1,'πüèσ»┐σÅ╕πü¿πâüπé¡πâ│πé╗πââπâê [µ£ƒΘûôΘÖÉσ«Ü]',2000),(5,1,2,'σÅ»µä¢πüäπüèσ╖╗πüì',1000),(6,1,2,'πüèσ»┐σÅ╕πü«µú«',2000),(8,1,2,'πé╡πâ╝πâóπâ│σ╖╗πüì',1000),(9,1,2,'σ¡úτ»Çπü«σ╖╗πüìσ»┐σÅ╕',1000),(10,1,2,'τ╛Äσæ│πüùπüäπüèσ»┐σÅ╕πé╗πââπâê',3000),(13,1,3,'τä╝πüìΘ│Ñ',2000),(14,1,1,'πüèσ»┐σÅ╕σ▒▒τ¢¢πéèπé╗πââπâê1σÅ╖ [πüèπüÖπüÖπéü]',4000),(16,1,3,'τé¡τü½τä╝πüì4τ¿« [πüèπüÖπüÖπéü]',1600),(17,1,7,'µù¿Φ╛¢σöÉµÅÜπüÆ',1500),(18,1,7,'µù¿µ╡╖ΦÇüπü«Σ║║τöƒ4σ░╛ [πüèπüÖπüÖπéü]',1800),(19,1,7,'σöÉµÅÜπüÆπü«Σ║║τöƒ',1400),(20,1,7,'πüíπéçπüúπü¿πüäπüäπâ¥πâåπâê',690),(21,1,7,'µÖ«ΘÇÜπü«πâ¥πâåπâê',650),(22,1,7,'πüíπéçπüúπü¿Φ╛¢πüäπâ¥πâåπâê',670),(23,1,7,'FUJISANπâ¥πâåπâê [πüèπüÖπüÖπéü]',750),(24,1,8,'Θú▓πü┐µö╛Θíî [πüèπüÖπüÖπéü]',3000),(25,1,8,'τöƒπâôπâ╝πâ½πâíπé¼',500),(27,1,8,'πâ¼πâóπâ│πé╡πâ»πâ╝πâíπé¼',500),(28,1,8,'πâ¼πâóπâ│πé╡πâ»πâ╝',300),(29,1,8,'πâÅπéñπâ£πâ╝πâ½πâíπé¼',500),(30,1,8,'πâÅπéñπâ£πâ╝πâ½',300),(32,1,9,'µ£¼µùÑπü«πâçπé╢πâ╝πâêτ¢¢πéèσÉêπéÅπü¢ [πüèπüÖπüÖπéü]',1000),(33,1,9,'Φªïπüƒτ¢«πééτ╛Äπüùπüäπâçπé╢πâ╝πâê',600),(34,1,9,'πâ»πââπâòπâ½',500),(35,1,9,'πâ₧πé½πâ¡πâ│πü¿πâÉπâïπâ⌐πéóπéñπé╣πü«τ¢¢πéèσÉêπéÅπü¢ [πüèπüÖπüÖπéü]',700),(36,1,9,'πâùπâ⌐πâ│πâöπâ╝πâæπâ│πé▒πâ╝πé¡πé╣πÇìπü«πü╡πéÅπü╡πéÅπâæπâ│πé▒πâ╝πé¡ [πüèπüÖπüÖπéü]',600),(37,1,3,'τé¡τü½τä╝πüì8τ¿«',2000),(38,1,1,'µ₧¥Φ▒å',0);
+/*!40000 ALTER TABLE `sitem` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `smanagement`
+--
+
+DROP TABLE IF EXISTS `smanagement`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `smanagement` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `state` int(11) DEFAULT 1,
+  `orderNo` varchar(50) NOT NULL,
+  `tableNo` int(11) NOT NULL,
+  `dateA` datetime DEFAULT current_timestamp(),
+  `dateB` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `smanagement`
+--
+
+LOCK TABLES `smanagement` WRITE;
+/*!40000 ALTER TABLE `smanagement` DISABLE KEYS */;
+INSERT INTO `smanagement` VALUES (1,2,'20260108054816-5520',1,'2026-01-08 13:48:16','2026-01-10 06:04:49'),(2,2,'20260108054942-6908',2,'2026-01-08 13:49:42','2026-01-10 06:09:36'),(3,2,'20260109051949-9403',5,'2026-01-09 13:19:49','2026-01-10 06:22:46'),(4,2,'20260109222218-4999',1,'2026-01-10 06:22:18','2026-01-10 06:23:35'),(5,2,'20260109222455-9391',1,'2026-01-10 06:24:55','2026-01-10 06:25:08'),(6,2,'20260110012138-4997',1,'2026-01-10 09:21:38','2026-01-10 09:42:11'),(7,2,'20260110084229-9450',1,'2026-01-10 16:42:29','2026-01-10 16:47:27'),(8,2,'20260110150037-4152',1,'2026-01-10 23:00:37','2026-01-10 23:27:02'),(9,2,'20260110150107-6692',1,'2026-01-10 23:01:07','2026-01-10 23:02:01'),(10,2,'20260110152741-1618',1,'2026-01-10 23:27:41','2026-01-10 23:29:20'),(11,2,'20260110152843-5953',1,'2026-01-10 23:28:43','2026-01-10 23:29:11'),(12,2,'20260110153135-4810',1,'2026-01-10 23:31:35','2026-01-11 17:11:17'),(13,2,'20260110161614-9542',1,'2026-01-11 00:16:14','2026-01-11 17:30:28'),(14,2,'20260110161629-7020',1,'2026-01-11 00:16:29','2026-01-11 17:11:12'),(15,2,'20260111090849-4876',1,'2026-01-11 17:08:49','2026-01-11 17:11:07'),(16,0,'20260111092934-9139',1,'2026-01-11 17:29:34','2026-01-11 18:44:56'),(17,2,'20260111111437-3375',2,'2026-01-11 19:14:37','2026-01-13 17:53:14'),(18,2,'20260115070844-2767',2,'2026-01-15 15:08:44','2026-01-15 15:18:52'),(19,2,'20260115071539-8668',2,'2026-01-15 15:15:39','2026-01-15 15:18:48'),(20,2,'20260115071608-8455',2,'2026-01-15 15:16:08','2026-01-15 15:18:18'),(21,2,'20260115072343-8678',2,'2026-01-15 15:23:43','2026-01-15 15:24:40'),(22,1,'20260125170508-4611',2,'2026-01-26 01:05:08','2026-01-26 01:05:52'),(23,0,'20260125172118-6676',2,'2026-01-26 01:21:18','2026-01-26 01:21:18');
+/*!40000 ALTER TABLE `smanagement` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sorder`
+--
+
+DROP TABLE IF EXISTS `sorder`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sorder` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `state` int(11) DEFAULT 1,
+  `orderNo` varchar(50) NOT NULL,
+  `itemNo` int(11) NOT NULL,
+  `amount` int(11) DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sorder`
+--
+
+LOCK TABLES `sorder` WRITE;
+/*!40000 ALTER TABLE `sorder` DISABLE KEYS */;
+INSERT INTO `sorder` VALUES (2,1,'20260108054816-5520',2,4),(3,1,'20260108054942-6908',9,4),(4,1,'20260108054942-6908',8,3),(5,1,'20260109051949-9403',1,3),(6,1,'20260108054816-5520',2,3),(8,1,'20260108054942-6908',2,1),(9,1,'20260108054942-6908',9,1),(10,1,'20260108054942-6908',9,1),(11,1,'20260108054816-5520',3,1),(12,1,'20260109222218-4999',1,1),(13,1,'20260109222218-4999',2,3),(14,1,'20260109222218-4999',3,1),(15,1,'20260109222218-4999',4,1),(16,1,'20260109222455-9391',1,1),(17,1,'20260110012138-4997',10,1),(18,1,'20260110084229-9450',16,2),(19,1,'20260110084229-9450',5,2),(20,1,'20260110084229-9450',14,1),(21,1,'20260110084229-9450',13,1),(22,1,'20260110150037-4152',5,1),(23,1,'20260110150107-6692',3,1),(24,1,'20260110152741-1618',4,1),(25,1,'20260110152843-5953',3,1),(27,1,'20260110153135-4810',1,2),(28,1,'20260110161614-9542',14,1),(32,1,'20260110161629-7020',14,1),(33,1,'20260111090849-4876',25,1),(34,1,'20260111090849-4876',38,1),(35,1,'20260111090849-4876',14,1),(36,1,'20260111090849-4876',13,4),(37,1,'20260111090849-4876',35,2),(44,1,'20260111111437-3375',18,2),(45,1,'20260111111437-3375',24,2),(47,1,'20260115070844-2767',37,1),(48,1,'20260115070844-2767',25,1),(49,1,'20260115070844-2767',38,4),(50,1,'20260115070844-2767',38,4),(51,1,'20260115070844-2767',8,1),(52,1,'20260115070844-2767',2,1),(53,1,'20260115071539-8668',14,1),(54,1,'20260115071608-8455',14,1),(55,1,'20260115071608-8455',38,1),(56,1,'20260115071608-8455',38,1),(57,1,'20260115071608-8455',38,1),(58,1,'20260115071608-8455',38,1),(60,1,'20260115072343-8678',3,1),(61,1,'20260125170508-4611',8,2);
+/*!40000 ALTER TABLE `sorder` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-02-07  2:44:56

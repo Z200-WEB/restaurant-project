@@ -23,15 +23,15 @@ try {
     // トランザクション開始
     $pdo->beginTransaction();
 
-    // 1. 既存の有効な注文(state=1)がこのテーブルにあるか確認
-    $sqlCheck = "SELECT orderNo FROM sManagement WHERE tableNo = :tableNo AND state = 1 LIMIT 1";
+    // 1. 既存の下書き注文(state=0)がこのテーブルにあるか確認
+    $sqlCheck = "SELECT orderNo FROM sManagement WHERE tableNo = :tableNo AND state = 0 LIMIT 1";
     $stmtCheck = $pdo->prepare($sqlCheck);
     $stmtCheck->bindValue(':tableNo', $tableNo, PDO::PARAM_INT);
     $stmtCheck->execute();
     $existingOrder = $stmtCheck->fetch(PDO::FETCH_ASSOC);
 
     if ($existingOrder) {
-        // 既存の注文がある場合、そのorderNoを使用
+        // 既存の下書き注文がある場合、そのorderNoを使用
         $orderNo = $existingOrder['orderNo'];
         
         // dateB (最終更新日時) を更新
@@ -42,9 +42,10 @@ try {
         
     } else {
         // 新規注文の場合、orderNoを生成してsManagementにINSERT
+        // state=0 (下書き/カート状態) で作成
         $orderNo = date('YmdHis') . '-' . mt_rand(1000, 9999);
         
-        $sqlMgmt = "INSERT INTO sManagement (orderNo, tableNo) VALUES (:orderNo, :tableNo)";
+        $sqlMgmt = "INSERT INTO sManagement (orderNo, tableNo, state) VALUES (:orderNo, :tableNo, 0)";
         $stmtMgmt = $pdo->prepare($sqlMgmt);
         $stmtMgmt->bindValue(':orderNo', $orderNo, PDO::PARAM_STR);
         $stmtMgmt->bindValue(':tableNo', $tableNo, PDO::PARAM_INT);
