@@ -22,7 +22,7 @@ try {
         $stmt->bindValue(':categoryName', $categoryName, PDO::PARAM_STR);
     } else {
         // Insert new category
-        $sql = "INSERT INTO sCategory (categoryName, state) VALUES (:categoryName, 1)";
+        $sql = "INSERT INTO sCategory (categoryName, categoryNo, state) VALUES (:categoryName, 0, 1)";
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':categoryName', $categoryName, PDO::PARAM_STR);
     }

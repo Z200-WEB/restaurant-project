@@ -18,7 +18,7 @@ $sql = "
     LEFT JOIN sOrder o ON m.orderNo = o.orderNo
     LEFT JOIN sItem i ON o.itemNo = i.id
     WHERE m.state = 1
-    GROUP BY m.orderNo
+    GROUP BY m.id, m.state, m.orderNo, m.tableNo, m.dateA, m.dateB
     ORDER BY m.dateB DESC
 ";
 $stmt = $pdo->prepare($sql);
