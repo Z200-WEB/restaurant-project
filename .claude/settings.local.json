@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command:*)",
+      "Bash(git remote add:*)",
+      "Bash(git fetch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)",
+      "Bash(git reset:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git rm:*)",
+      "Bash(cmd /c \"c:\\\\xampp\\\\mysql\\\\bin\\\\mysqldump -u root --default-character-set=utf8mb4 practice sCategory sItem sManagement sOrder --skip-comments --skip-lock-tables --skip-add-locks --skip-set-charset --no-create-info > c:\\\\xampp\\\\htdocs\\\\smartorder\\\\data_only.sql\")",
+      "Bash(cmd /c \"c:\\\\xampp\\\\mysql\\\\bin\\\\mysqldump -u root --default-character-set=utf8mb4 practice sCategory sItem sManagement sOrder > c:\\\\xampp\\\\htdocs\\\\smartorder\\\\data_fix.sql\")",
+      "Bash(cmd /c \"c:\\\\xampp\\\\mysql\\\\bin\\\\mysqldump -u root --default-character-set=utf8mb4 practice scategory sitem smanagement sorder 2>&1 > c:\\\\xampp\\\\htdocs\\\\smartorder\\\\data_fix.sql\")",
+      "Bash(c:xamppmysqlbinmysql -u root -e \"SHOW TABLES FROM practice;\")",
+      "Bash(cmd /c \"c:\\\\xampp\\\\mysql\\\\bin\\\\mysql -u root -e \"\"SHOW TABLES FROM practice;\"\"\")",
+      "Bash(cmd /c \"c:\\\\xampp\\\\mysql\\\\bin\\\\mysqldump.exe -u root --default-character-set=utf8mb4 practice scategory sitem smanagement sorder\")",
+      "Bash(cmd /c c:xampphtdocssmartorderexport.bat)",
+      "WebFetch(domain:restaurant-project-production-a27b.up.railway.app)"
+    ]
+  }
+}
