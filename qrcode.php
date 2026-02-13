@@ -2,7 +2,7 @@
 require_once 'auth.php';
 requireAuth();
 
-$baseUrl = 'https://class-project-production-5fa4.up.railway.app/index.php?tableNo=';
+$baseUrl = 'https://restaurant-project-production-a27b.up.railway.app/index.php?tableNo=';
 $tables = 5;
 ?>
 <!DOCTYPE html>
