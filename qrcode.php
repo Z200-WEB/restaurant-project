@@ -2,7 +2,9 @@
 require_once 'auth.php';
 requireAuth();
 
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+$protocol = $isHttps ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'];
 $baseUrl = $protocol . '://' . $host . '/index.php?tableNo=';
 $tables = 5;
