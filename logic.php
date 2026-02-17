@@ -1,195 +1,71 @@
 <?php
-require_once 'auth.php';
+require_once 'pdo.php';
+header('Content-Type: application/json; charset=UTF-8');
 
-// If already logged in, redirect to admin
-if (isLoggedIn()) {
-    header('Location: admin.php');
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
     exit;
 }
 
-$error = '';
+try {
+    $itemId = (int)$_POST['itemId'];
+    $tableNo = (int)$_POST['tableNo'];
+    $amount = (int)$_POST['amount'];
 
-// Handle login form submission with CSRF validation
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate CSRF token for login form
-    $token = $_POST['csrf_token'] ?? '';
-    if (!validateCsrfToken($token)) {
-        $error = 'Security token expired. Please try again.';
-    } else {
-        $username = $_POST['username'] ?? '';
-        $password = $_POST['password'] ?? '';
-
-        if (login($username, $password)) {
-            header('Location: admin.php');
-            exit;
-        } else {
-            $error = 'Invalid username or password';
-        }
+    if ($itemId <= 0 || $tableNo <= 0 || $amount <= 0) {
+        throw new Exception('Invalid parameters');
     }
+
+    // Check if there's an existing draft order (state=0) for this table
+    $sql = "SELECT orderNo FROM sManagement WHERE tableNo = :tableNo AND state = 0";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindValue(':tableNo', $tableNo, PDO::PARAM_INT);
+    $stmt->execute();
+    $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($existing) {
+        // Use existing draft order
+        $orderNo = $existing['orderNo'];
+    } else {
+        // Create new draft order with generated orderNo
+        $orderNo = date('YmdHis') . '-' . sprintf('%04d', rand(0, 9999));
+
+        $sql = "INSERT INTO sManagement (state, orderNo, tableNo) VALUES (0, :orderNo, :tableNo)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':orderNo', $orderNo, PDO::PARAM_STR);
+        $stmt->bindValue(':tableNo', $tableNo, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    // Check if this item already exists in the order
+    $sql = "SELECT id, amount FROM sOrder WHERE orderNo = :orderNo AND itemNo = :itemNo";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindValue(':orderNo', $orderNo, PDO::PARAM_STR);
+    $stmt->bindValue(':itemNo', $itemId, PDO::PARAM_INT);
+    $stmt->execute();
+    $existingItem = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($existingItem) {
+        // Update quantity of existing item
+        $newAmount = $existingItem['amount'] + $amount;
+        $sql = "UPDATE sOrder SET amount = :amount WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':amount', $newAmount, PDO::PARAM_INT);
+        $stmt->bindValue(':id', $existingItem['id'], PDO::PARAM_INT);
+        $stmt->execute();
+    } else {
+        // Add new item to order
+        $sql = "INSERT INTO sOrder (state, orderNo, itemNo, amount) VALUES (1, :orderNo, :itemNo, :amount)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':orderNo', $orderNo, PDO::PARAM_STR);
+        $stmt->bindValue(':itemNo', $itemId, PDO::PARAM_INT);
+        $stmt->bindValue(':amount', $amount, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    echo json_encode(['status' => 'success', 'orderNo' => $orderNo]);
+
+} catch (Exception $e) {
+    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
-
-// Generate CSRF token for the form
-$csrfToken = generateCsrfToken();
 ?>
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SmartOrder Admin</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .login-container {
-            background: white;
-            padding: 50px 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .login-icon {
-            font-size: 4em;
-            margin-bottom: 15px;
-        }
-
-        .login-title {
-            font-size: 1.8em;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        .login-subtitle {
-            color: #7f8c8d;
-            font-size: 0.95em;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 8px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.95em;
-            text-align: center;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 25px;
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-
-<div class="login-container">
-    <div class="login-header">
-        <div class="login-icon">&#x1F512;</div>
-        <h1 class="login-title">Admin Login</h1>
-        <p class="login-subtitle">SmartOrder Management System</p>
-    </div>
-
-    <?php if ($error): ?>
-        <div class="error-message"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
-
-    <form method="POST" action="">
-        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
-        
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required autofocus
-                   placeholder="Enter username">
-        </div>
-
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required
-                   placeholder="Enter password">
-        </div>
-
-        <button type="submit" class="btn-login">Login</button>
-    </form>
-
-    <a href="index.php?tableNo=1" class="back-link">&larr; Back to Customer View</a>
-</div>
-
-</body>
-</html>
