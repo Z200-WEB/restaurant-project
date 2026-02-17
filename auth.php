@@ -2,6 +2,11 @@
 /**
  * Authentication & CSRF Protection System
  * SmartOrder - Restaurant Management System
+ * 
+ * Security features:
+ * - Password hashing with bcrypt (PASSWORD_DEFAULT)
+ * - CSRF token generation and validation using hash_equals()
+ * - Secure session management with regeneration on login
  */
 
 // Start session if not already started
@@ -9,9 +14,18 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Admin credentials - FIXED: Use pre-hashed password
+// Admin credentials
 define('ADMIN_USERNAME', 'admin');
-define('ADMIN_PASSWORD', 'admin123');
+
+// Password hash - generated with: password_hash('admin123', PASSWORD_DEFAULT)
+// In production, this should be stored in environment variables or a database.
+// To change the password, run: php -r "echo password_hash('YOUR_NEW_PASSWORD', PASSWORD_DEFAULT);"
+// Then replace the hash below.
+if (!defined('ADMIN_PASSWORD_HASH')) {
+    // Generate and cache hash at runtime for demo environment
+    // In production, always use a pre-computed hash stored securely
+    define('ADMIN_PASSWORD_HASH', password_hash('admin123', PASSWORD_DEFAULT));
+}
 
 /**
  * Check if user is logged in
@@ -31,10 +45,13 @@ function requireAuth(): void {
 }
 
 /**
- * Login user
+ * Login user with secure password verification
+ * Uses password_verify() to compare against bcrypt hash
  */
 function login(string $username, string $password): bool {
-    if ($username === ADMIN_USERNAME && $password === ADMIN_PASSWORD) {
+    if ($username === ADMIN_USERNAME && password_verify($password, ADMIN_PASSWORD_HASH)) {
+        // Regenerate session ID to prevent session fixation attacks
+        session_regenerate_id(true);
         $_SESSION['admin_logged_in'] = true;
         $_SESSION['admin_username'] = $username;
         $_SESSION['login_time'] = time();
@@ -45,7 +62,7 @@ function login(string $username, string $password): bool {
 }
 
 /**
- * Logout user
+ * Logout user - destroy session completely
  */
 function logout(): void {
     $_SESSION = [];
@@ -60,7 +77,7 @@ function logout(): void {
 }
 
 /**
- * Generate CSRF token
+ * Generate CSRF token using cryptographically secure random bytes
  */
 function generateCsrfToken(): string {
     if (!isset($_SESSION['csrf_token'])) {
@@ -70,7 +87,7 @@ function generateCsrfToken(): string {
 }
 
 /**
- * Regenerate CSRF token
+ * Regenerate CSRF token (called after login and sensitive operations)
  */
 function regenerateCsrfToken(): string {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -78,7 +95,7 @@ function regenerateCsrfToken(): string {
 }
 
 /**
- * Validate CSRF token
+ * Validate CSRF token using timing-safe comparison
  */
 function validateCsrfToken(?string $token): bool {
     if (empty($token) || empty($_SESSION['csrf_token'])) {
@@ -89,6 +106,7 @@ function validateCsrfToken(?string $token): bool {
 
 /**
  * Require valid CSRF token for POST/DELETE requests
+ * Checks both POST body and X-CSRF-TOKEN header
  */
 function requireCsrf(): void {
     if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'DELETE') {
@@ -107,7 +125,7 @@ function requireCsrf(): void {
 }
 
 /**
- * Get CSRF token input field for forms
+ * Get CSRF token input field for HTML forms
  */
 function csrfField(): string {
     return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(generateCsrfToken()) . '">';

@@ -435,6 +435,12 @@ $csrfToken = generateCsrfToken();
     </div>
 </div>
 
+<!-- Hidden form for secure POST-based deletion -->
+<form id="deleteForm" method="POST" style="display:none;">
+    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+    <input type="hidden" name="id" id="deleteFormId" value="">
+</form>
+
 <script>
 // CSRF Token for AJAX requests
 const csrfToken = '<?php echo htmlspecialchars($csrfToken); ?>';
@@ -546,15 +552,18 @@ function editItem(item) {
 }
 
 // ========== MODERN DELETE FUNCTIONS ==========
-let pendingDeleteUrl = '';
+// Security: Uses POST method with CSRF token instead of GET
+let pendingDeleteType = '';
+let pendingDeleteId = 0;
 
 function showDeleteConfirm(type, id, name) {
+    pendingDeleteType = type;
+    pendingDeleteId = id;
+
     if (type === 'item') {
-        pendingDeleteUrl = 'admin_item_delete.php?id=' + id;
         document.getElementById('confirmDeleteTitle').textContent = '商品を削除しますか?';
         document.getElementById('confirmDeleteMessage').textContent = 'この商品を削除します。この操作は取り消せません。';
     } else {
-        pendingDeleteUrl = 'admin_category_delete.php?id=' + id;
         document.getElementById('confirmDeleteTitle').textContent = 'カテゴリを削除しますか?';
         document.getElementById('confirmDeleteMessage').textContent = 'このカテゴリを削除します。この操作は取り消せません。';
     }
@@ -584,16 +593,25 @@ function editCategory(cat) {
 // ========== CONFIRM DELETE MODAL CONTROL ==========
 function closeDeleteConfirmModal() {
     document.getElementById('confirmDeleteModal').classList.remove('active');
-    pendingDeleteUrl = '';
+    pendingDeleteType = '';
+    pendingDeleteId = 0;
 }
 
 function executeDelete() {
-    if (pendingDeleteUrl) {
-        var url = pendingDeleteUrl;
+    if (pendingDeleteType && pendingDeleteId) {
+        var form = document.getElementById('deleteForm');
+        document.getElementById('deleteFormId').value = pendingDeleteId;
+
+        if (pendingDeleteType === 'item') {
+            form.action = 'admin_item_delete.php';
+        } else {
+            form.action = 'admin_category_delete.php';
+        }
+
         closeDeleteConfirmModal();
         showLoading();
-        // Direct navigation to delete PHP file
-        window.location.href = url;
+        // Submit via POST with CSRF token (secure, not GET)
+        form.submit();
     }
 }
 
