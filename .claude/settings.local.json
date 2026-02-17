@@ -25,7 +25,10 @@
       "Bash(Select-String -Pattern \"baseUrl\")",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(del \"c:\\\\xampp\\\\htdocs\\\\smartorder\\\\nul\")",
-      "Bash(git -C \"c:/xampp/htdocs/smartorder\" status)"
+      "Bash(git -C \"c:/xampp/htdocs/smartorder\" status)",
+      "Bash(composer install:*)",
+      "Bash(where:*)",
+      "Bash(c:/xampp/php/php.exe:*)"
     ]
   }
 }
