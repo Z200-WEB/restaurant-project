@@ -2,6 +2,10 @@
 // UTF-8 ENCODING - MUST BE FIRST!
 header('Content-Type: text/html; charset=UTF-8');
 
+// Authentication required - order details should only be visible to staff
+require_once 'auth.php';
+requireAuth();
+
 // Load database connection
 require_once 'pdo.php';
 
@@ -44,7 +48,7 @@ foreach ($details as $d) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧾 注文詳細 - <?php echo htmlspecialchars($orderNo); ?></title>
+    <title>&#x1F9FE; 注文詳細 - <?php echo htmlspecialchars($orderNo); ?></title>
     <style>
         * {
             margin: 0;
@@ -285,26 +289,26 @@ foreach ($details as $d) {
 <div class="container">
     <div class="receipt-wrapper">
         <div class="receipt-header">
-            <div class="receipt-title">🧾 注文詳細</div>
+            <div class="receipt-title">&#x1F9FE; 注文詳細</div>
             <div class="receipt-subtitle">Order Receipt</div>
         </div>
         
         <div class="order-info-box">
             <div class="order-info-grid">
                 <div class="info-item">
-                    <div class="info-label">📋 注文番号</div>
+                    <div class="info-label">&#x1F4CB; 注文番号</div>
                     <div class="info-value"><?php echo htmlspecialchars(substr($mgmt['orderNo'], -12)); ?></div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">🍽️ テーブル番号</div>
+                    <div class="info-label">&#x1F37D;&#xFE0F; テーブル番号</div>
                     <div class="info-value">Table <?php echo htmlspecialchars($mgmt['tableNo']); ?></div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">📅 注文日時</div>
+                    <div class="info-label">&#x1F4C5; 注文日時</div>
                     <div class="info-value"><?php echo date('Y/m/d H:i', strtotime($mgmt['dateA'])); ?></div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">🔄 最終更新</div>
+                    <div class="info-label">&#x1F504; 最終更新</div>
                     <div class="info-value"><?php echo date('Y/m/d H:i', strtotime($mgmt['dateB'])); ?></div>
                 </div>
             </div>
@@ -312,7 +316,7 @@ foreach ($details as $d) {
 
         <div class="items-section">
             <div class="section-title">
-                <span>🍔</span>
+                <span>&#x1F4DD;</span>
                 <span>注文商品</span>
             </div>
             
@@ -329,9 +333,9 @@ foreach ($details as $d) {
                     <?php foreach ($details as $detail): ?>
                     <tr>
                         <td class="item-name"><?php echo htmlspecialchars($detail['name']); ?></td>
-                        <td class="item-price">¥<?php echo number_format($detail['price']); ?></td>
-                        <td class="item-qty">× <?php echo htmlspecialchars($detail['amount']); ?></td>
-                        <td class="item-subtotal">¥<?php echo number_format($detail['price'] * $detail['amount']); ?></td>
+                        <td class="item-price">&yen;<?php echo number_format($detail['price']); ?></td>
+                        <td class="item-qty">&times; <?php echo htmlspecialchars($detail['amount']); ?></td>
+                        <td class="item-subtotal">&yen;<?php echo number_format($detail['price'] * $detail['amount']); ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -345,18 +349,18 @@ foreach ($details as $d) {
             </div>
             
             <div class="total-row grand-total">
-                <span>💰 合計金額</span>
-                <span>¥<?php echo number_format($total); ?></span>
+                <span>&#x1F4B0; 合計金額</span>
+                <span>&yen;<?php echo number_format($total); ?></span>
             </div>
         </div>
 
         <div class="actions">
-            <a href="management.php" class="btn btn-back">← 一覧に戻る</a>
-            <button onclick="window.print()" class="btn btn-print">🖨️ 印刷する</button>
+            <a href="management.php" class="btn btn-back">&larr; 一覧に戻る</a>
+            <button onclick="window.print()" class="btn btn-print">&#x1F5A8;&#xFE0F; 印刷する</button>
         </div>
 
         <div class="receipt-footer">
-            <p>✨ ご注文ありがとうございました ✨</p>
+            <p>&#x2728; ご注文ありがとうございました &#x2728;</p>
         </div>
     </div>
 </div>

@@ -1,24 +1,34 @@
 <?php
-// Start output buffering to prevent header issues
+/**
+ * Delete menu item - requires POST method with CSRF token
+ * Security: Authentication + CSRF validation + POST-only
+ */
 ob_start();
 
 // Authentication first
 require_once 'auth.php';
 requireAuth();
+requireCsrf();
 
 // Load database
 require_once 'pdo.php';
 
-// Get ID parameter
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+// Only allow POST requests (GET-based deletion is a security risk)
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: admin.php?error=' . urlencode('Invalid request method'));
+    exit;
+}
+
+// Get ID parameter from POST body
+if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
     header('Location: admin.php?error=' . urlencode('Invalid ID'));
     exit;
 }
 
-$id = (int)$_GET['id'];
+$id = (int)$_POST['id'];
 
 try {
-    // Delete item from database (lowercase table name)
+    // Delete item from database
     $sql = "DELETE FROM sItem WHERE id = :id";
     $stmt = $pdo->prepare($sql);
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);

@@ -1,78 +1,195 @@
 <?php
-require_once 'pdo.php';
+require_once 'auth.php';
 
-// JSONレスポンス用ヘッダー
-header('Content-Type: application/json; charset=UTF-8');
-
-// POSTメソッドのみ許可
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request method']);
+// If already logged in, redirect to admin
+if (isLoggedIn()) {
+    header('Location: admin.php');
     exit;
 }
 
-// パラメータ取得
-$itemId = isset($_POST['itemId']) ? (int)$_POST['itemId'] : 0;
-$tableNo = isset($_POST['tableNo']) ? (int)$_POST['tableNo'] : 0;
+$error = '';
 
-if ($itemId <= 0 || $tableNo <= 0) {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid parameters']);
-    exit;
-}
-
-try {
-    // トランザクション開始
-    $pdo->beginTransaction();
-
-    // 1. 既存の下書き注文(state=0)がこのテーブルにあるか確認
-    $sqlCheck = "SELECT orderNo FROM sManagement WHERE tableNo = :tableNo AND state = 0 LIMIT 1";
-    $stmtCheck = $pdo->prepare($sqlCheck);
-    $stmtCheck->bindValue(':tableNo', $tableNo, PDO::PARAM_INT);
-    $stmtCheck->execute();
-    $existingOrder = $stmtCheck->fetch(PDO::FETCH_ASSOC);
-
-    if ($existingOrder) {
-        // 既存の下書き注文がある場合、そのorderNoを使用
-        $orderNo = $existingOrder['orderNo'];
-        
-        // dateB (最終更新日時) を更新
-        $sqlUpdate = "UPDATE sManagement SET dateB = CURRENT_TIMESTAMP WHERE orderNo = :orderNo";
-        $stmtUpdate = $pdo->prepare($sqlUpdate);
-        $stmtUpdate->bindValue(':orderNo', $orderNo, PDO::PARAM_STR);
-        $stmtUpdate->execute();
-        
+// Handle login form submission with CSRF validation
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Validate CSRF token for login form
+    $token = $_POST['csrf_token'] ?? '';
+    if (!validateCsrfToken($token)) {
+        $error = 'Security token expired. Please try again.';
     } else {
-        // 新規注文の場合、orderNoを生成してsManagementにINSERT
-        // state=0 (下書き/カート状態) で作成
-        $orderNo = date('YmdHis') . '-' . mt_rand(1000, 9999);
-        
-        $sqlMgmt = "INSERT INTO sManagement (orderNo, tableNo, state) VALUES (:orderNo, :tableNo, 0)";
-        $stmtMgmt = $pdo->prepare($sqlMgmt);
-        $stmtMgmt->bindValue(':orderNo', $orderNo, PDO::PARAM_STR);
-        $stmtMgmt->bindValue(':tableNo', $tableNo, PDO::PARAM_INT);
-        $stmtMgmt->execute();
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        if (login($username, $password)) {
+            header('Location: admin.php');
+            exit;
+        } else {
+            $error = 'Invalid username or password';
+        }
     }
-
-    // 2. sOrder (注文明細) にINSERT
-    // amountを受け取る (デフォルト1)
-    $amount = isset($_POST['amount']) ? (int)$_POST['amount'] : 1;
-    if ($amount < 1) $amount = 1;
-
-    $sqlOrder = "INSERT INTO sOrder (orderNo, itemNo, amount) VALUES (:orderNo, :itemNo, :amount)";
-    $stmtOrder = $pdo->prepare($sqlOrder);
-    $stmtOrder->bindValue(':orderNo', $orderNo, PDO::PARAM_STR);
-    $stmtOrder->bindValue(':itemNo', $itemId, PDO::PARAM_INT);
-    $stmtOrder->bindValue(':amount', $amount, PDO::PARAM_INT);
-    $stmtOrder->execute();
-
-    // コミット
-    $pdo->commit();
-
-    echo json_encode(['status' => 'success', 'orderNo' => $orderNo]);
-
-} catch (Exception $e) {
-    // ロールバック
-    if ($pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
+
+// Generate CSRF token for the form
+$csrfToken = generateCsrfToken();
+?>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SmartOrder Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .login-title {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .login-subtitle {
+            color: #7f8c8d;
+            font-size: 0.95em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            text-align: center;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-header">
+        <div class="login-icon">&#x1F512;</div>
+        <h1 class="login-title">Admin Login</h1>
+        <p class="login-subtitle">SmartOrder Management System</p>
+    </div>
+
+    <?php if ($error): ?>
+        <div class="error-message"><?php echo htmlspecialchars($error); ?></div>
+    <?php endif; ?>
+
+    <form method="POST" action="">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+        
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required autofocus
+                   placeholder="Enter username">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required
+                   placeholder="Enter password">
+        </div>
+
+        <button type="submit" class="btn-login">Login</button>
+    </form>
+
+    <a href="index.php?tableNo=1" class="back-link">&larr; Back to Customer View</a>
+</div>
+
+</body>
+</html>
